@@ -1,0 +1,256 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+void PrintBits(int num)
+{
+	if (!num) {
+		cout << num << " "; 
+		return;
+	}
+	PrintBits(num >> 1);// num / 2
+	// print the most left bits first
+	cout << (num &1) << " ";// num % 2
+}
+int CountOnes(int N)
+{
+	int cnt = 0;
+	while (N)
+	{
+		cnt += (N & 1);
+		N >>= 1;// Remove the last bit from the right that is equal divide num by two 
+	}
+	return cnt;
+}
+int Deletefirstbit1(int N)
+{
+	/*
+	if you minus the number by 1 that means flip all bits from the right 
+	   to first bit equal one.
+	Now if do and between the number and number munis one, that means:
+	   delete  first bit equal 1
+	zeros from right eat the oppsitte ones  (:
+	*/
+	return N & (N - 1);
+}
+int CountOnesV2(int N)
+{
+	// while the number have a value means: (there is ones).
+	// remove it and count please:)
+	int cnt = 0;
+	while (N)
+	{
+		cnt++;
+		N &= (N - 1);
+	}
+	return cnt;
+}
+int Getbit1(int N,int  idx)
+{
+	/*
+	with shift left:
+		Ex: N=19    idx=3
+			in Five bits 
+							32 16 8 4 2 1
+		19          ->		0  1  0 0 1 1
+		(1<<idx)			0  0  0 1 0 0
+		----------------------------------&
+		(19 & (1<<idx))     0  0  0 1 0 0
+		then 
+		if( (1<<idx) == (N & (1<<idx)) ) RETURN 1;
+		else return 0;
+	*/
+	return (1 << idx) == (N & (1 << idx));
+}
+int Getbit2(int N, int idx)
+{
+	/*
+	with shift right
+
+			Ex: N = 19    idx = 3
+			  represint in Five bits
+								32 16 8 4 2 1
+			19          ->		0  1  0 0 1 1
+
+			(19 >> idx)			0  0  0 0 1 0
+
+			1           ->		0  0  0 0 0 1
+			---------------------------------- &
+			(1 & (1 << idx))    0  0  0 0 0 0
+			then
+			if ((N >> idx) & 1 == 1 ) RETURN 1;
+			else return 0;
+	*/
+	return ( (N >> idx) & 1 == 1 );
+}
+int Setbit1(int N, int idx)
+{
+	/*
+	I can move to bit with shift left 1 idx times,
+	then i want to set it by one, 
+	now i need to | this bit with ! without change the other bits
+	ok  shift left 1 idx times can do it 
+		
+		EX: N = 19 , idx = 4
+
+		in Five bits
+							32 16 8 4 2 1
+		19          ->		0  1  0 0 1 1
+		(1<<idx)	->		0  0  1 0 0 0
+		----------------------------------  |
+		(19 | ~(1<<idx))    0  1  1 0 1 1 
+
+		then return ( N | (1<<idx) );
+		*/
+	return (N | (1 << idx));
+}
+int Setbit0(int N, int idx)
+{
+	/*
+	I can move to bit  with shift left 1 idx times,
+	then i want to set it by zero, 
+	now i need to & this bit with zero without change the other bits
+	ok not shift left 1 idx times can do it 
+		
+		EX: N = 19 , idx = 5
+
+		in Five bits
+							32 16 8 4 2 1
+		19          ->		0  1  0 0 1 1
+		(1<<idx)	->		0  1  0 0 0 0
+		~(1<<idx)   ->      1  0  1 1 1 1
+		----------------------------------&
+		(19 & ~(1<<idx))    0  0  0 0 1 1 
+
+		then return ( N & ~(1<<idx) );
+	*/
+	return (N & ~(1 << idx));
+}
+int Flipbit(int N, int idx)
+{
+	/*
+	I can move to bit  with shift left 1 idx times,
+	then i want to flip it,
+	now i need to XOR this bit with 1 without change the other bits
+	ok  shift left 1 idx times can do it
+
+		EX: N = 19 , idx = 5
+
+		in Five bits
+							32 16 8 4 2 1
+		19          ->		0  1  0 0 1 1
+		(1<<idx)	->		0  1  0 0 0 0
+		---------------------------------- ^
+		(19 ^ (1<<idx))     0  0  0 0 1 1
+
+
+		EX: N = 19 , idx = 4
+
+		in Five bits
+							32 16 8 4 2 1
+		19          ->		0  1  0 0 1 1
+		(1<<idx)	->		0  0  1 0 0 0
+		---------------------------------- ^
+		(19 ^ (1<<idx))     0  1  1 0 1 1
+
+		then return ( N ^ (1<<idx) );
+	*/
+	return (N ^ (1 << idx));
+}
+int N_mod_Pow2(int N, int X)
+{
+	return N & (X - 1);
+}
+int First_pow2_GreaterorEq(int N)
+{
+	int i = 0;
+	while (1<<i<N)
+	{
+		i++;
+	}
+	return 1 << i;
+}
+int FirstValue(int N)
+{
+	/*
+	if you minus the number by 1 that means flip all bits from the right 
+	   to first bit equal one inclusive and the left side from the number not change.
+	Now you need to remove the left side and right side aftar the first one,
+	   Take NOT to minus the number by 1 and make AND between it and the origenal number 
+	*/
+	return N & ~(N - 1);
+}
+int First_One_bit_index(int N)
+{
+	int temp = FirstValue(N);
+	int idx = 0;
+	while (1<<idx<temp)
+		idx++;
+
+	return idx;
+//or this equation   {   return log2(FirstValue(N));  } 
+}
+char ch; // bool frq[8]
+const int SZ = 1e8;
+char frq[SZ / 8 + 1];
+int main() {
+	cout << "128 64 32 16 8 4 2 1\n";// print this to know index start from right
+	string s(13, ' '); cout << s;
+	PrintBits(7); cout << " " << 7 <<" D\n";
+	/*
+	Bool frquncey array if your numbers from 0 to 1e8. 
+	You can not declare frq array with 1e8 elements.
+	But you can manipilate with bits and solve this problem.
+	simulate this problem with bool array of 8 elements.
+	bool frq[8];  Ha!??
+	One byte solve it, you can declare one characher variable, 
+	  each bit value simulate the state (found | not found) and bit index 
+	  simulate the real number in array.
+	*/
+	int n; cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		int x; cin >> x;
+		ch = Setbit1(ch, x); // ch|=(1<<x)
+	}
+	for (int i = 0; i < 8; i++)
+	{
+		cout << i << ' ';
+		if (Getbit1(ch, i))cout << "found";
+		else cout << "Not found";
+		cout << endl;
+	}
+	/*
+	if the numbers get bigger you have a problem.
+	Problem: Each indexs in each byte from 0 to 7.
+	you need to found the byte index and index in the byte.
+
+	index in each byte:
+	0 1 2 3 4 5 6 7 | 0 1 2 3 4 5 6 7 | 0 1 2 3 4 5 6 7
+	if number greater than 7 what can you do !?
+	You need it like this:
+	0 1 2 3 4 5 6 7 | 8 9 10 11 12 13 | 14 15 16  17 18 19 20 21...
+	byte index = num/8       zero base Ha (:
+	index in byte = num%8
+	num / 8 => (num>>3) or ( num / (1<<3) )
+	i prove it in: number mod power of two
+	N % 2 => N & 1 ?!
+	num % 8 => (num & 7)
+	*/
+	cout << "-------------------------\n";
+	cin >> n;
+	int mx = 0;
+	for (int i = 0; i < n; i++)
+	{
+		int x; cin >> x;
+		mx = max(mx, x);
+		frq[x >> 3] = Setbit1(frq[x >> 3], x & 7);
+	}
+	for (int i = 0; i <= mx; i++)
+	{
+		cout << i << ' ';
+		if (Getbit1(frq[i >> 3], i & 7))
+			cout << "found";
+		else cout << "Not found";
+		cout << endl;
+	}// you can simulate this in array of integers  (32 bits)
+}
