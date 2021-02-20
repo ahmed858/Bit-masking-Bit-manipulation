@@ -189,6 +189,35 @@ int First_One_bit_index(int N)
 	return idx;
 //or this equation   {   return log2(FirstValue(N));  } 
 }
+int First_bit0_idx1(int N)
+{
+	/*
+	it is so easy :)
+	we can invert the number and get first bit equal one index.
+	*/
+	N = ~N;
+	return log2(FirstValue(N));
+}
+int First_bit0_idx2(int N)
+{
+	/*
+	If anybody cares here is an algorithm to find the first zero bit in a number:
+	1-	Invert the number  ( ~(NUM) ) 
+	2-	Compute the two's complement of the inverted number
+	3-	AND the results of (1) and (2)
+    4-  Find the position by computing the binary logarithm of (3)
+
+	EX: For the number:
+		128 64 32 16 8 4 2 1
+	N=	1   0  1  1  0 1 1 1 
+	1-	0   1  0  0  1 0 0 0 inverted number
+	2-	1   0  1  1  1 0 0 0  (N+1) = the two's complement of the inverted number
+	3-	01001000 AND 10111000 = 00001000
+	4-	log2(00001000) = 3
+    */
+	int x =~N;
+	return log2(x & (N + 1));
+}
 char ch; // bool frq[8]
 const int SZ = 1e8;
 char frq[SZ / 8 + 1];
